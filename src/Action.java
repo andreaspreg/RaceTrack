@@ -7,4 +7,9 @@ public class Action {
 		this.accY = accY;
 		this.accX = accX;
 	}
+	
+	@Override
+	public String toString() {
+		return "Action(" + accY + "," + accX + ")"; 
+	}
 }

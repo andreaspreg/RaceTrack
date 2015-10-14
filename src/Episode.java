@@ -5,59 +5,44 @@ import java.util.List;
 public class Episode {
 	
 	Track track;
-	
+
 	List<Action> actions = new ArrayList<Action>();
+	List<State> states = new ArrayList<State>();
 	final Point start;
 	
 	final int[][] path;
+	int pathNumber = 1;
 	
 	public Episode(Track track, Point start) {
 		this.track = track;
 		this.start = start;
 		
-		path = new int[track.height][track.width];
-	}
-	
-	public void addAction(Action action) {
-		actions.add(action);
-	}
-	
-	public void generatePath() {
-		
-		//reset path
-		for(int y = 0; y < track.height; y++) {
-			for(int x = 0; x < track.width; x++) {
+		//create and initialize path array
+		path = new int[Track.HEIGHT][Track.WIDTH];
+		for(int y = 0; y < Track.HEIGHT; y++) {
+			for(int x = 0; x < Track.WIDTH; x++) {
 				path[y][x] = 0;
 			}
 		}
+		path[start.y][start.x] = pathNumber++;
+	}
+	
+	public void add(Action action, State state) {
+		actions.add(action);
+		states.add(state);
 		
-		//set start point
-		path[start.y][start.x] = 1;
-		
-		//iterate through actions
-		Point currentPos = (Point) start.clone();
-		Point currentSpeed = new Point(0,0);
-		int i = 2;
-		
-		for(Action action : actions) {
-			currentSpeed.x += action.accX;
-			currentSpeed.y += action.accY;
-			currentPos.x += currentSpeed.x;
-			currentPos.y += currentSpeed.y;
-			
-			if(currentPos.x < 0 || currentPos.x >= track.width ||
-					currentPos.y < 0 || currentPos.y >= track.height) {
-				continue;
-			}
-			
-			path[currentPos.y][currentPos.x] = i++;
+		addPath(state);
+	}
+	
+	private void addPath(State state) {
+		if(state.posX >= 0 && state.posX < Track.WIDTH &&
+				state.posY >= 0 && state.posY < Track.HEIGHT) {
+			path[state.posY][state.posX] = pathNumber++;
 		}
 	}
 
 	@Override
-	public String toString() {
-		generatePath();
-		
+	public String toString() {		
 		StringBuilder str = new StringBuilder();
 		
 		for(int y = 0; y < track.pos.length; y++) {
