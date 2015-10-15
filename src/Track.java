@@ -1,6 +1,8 @@
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 
 public class Track {
 
@@ -78,6 +80,22 @@ public class Track {
 		}
 		
 		return line;
+	}
+
+	public Point selectRandomStartPoint() {
+		List<Point> startLine = new ArrayList<Point>();
+		
+		for(int y = 0; y < HEIGHT; y++) {
+			for(int x = 0; x < WIDTH; x++) {
+				if(pos[y][x] == TrackState.START) {
+					startLine.add(new Point(x,y));
+				}
+			}
+		}
+		
+		//select a random
+		Random random = new Random();
+		return startLine.get(random.nextInt(startLine.size()));
 	}
 
 	@Override

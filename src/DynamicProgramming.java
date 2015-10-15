@@ -22,7 +22,7 @@ public class DynamicProgramming {
 	
 	public Episode generateEpisode() {
 		//start point
-		Point startPoint = new Point(4,31);
+		Point startPoint = track.selectRandomStartPoint();
 		Episode episode = new Episode(track, startPoint);
 		
 		State state = new State(startPoint.y, startPoint.x, 0, 0);
