@@ -40,7 +40,8 @@ public class ValueFunction {
 		}
 		
 		//minus distance, because the reward is minus
-		setValue(-minDistance, s);
+		//setValue(-minDistance, s);
+		setValue(0,s);
 	}
 	
 	public void setValue(double value, State s) {

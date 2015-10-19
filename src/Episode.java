@@ -5,6 +5,8 @@ import java.util.List;
 public class Episode {
 	
 	Track track;
+	
+	int reward = 0;
 
 	List<Action> actions = new ArrayList<Action>();
 	List<State> states = new ArrayList<State>();
@@ -53,7 +55,8 @@ public class Episode {
 						str.append("X");
 					}
 					else {
-						str.append(Integer.toString(path[y][x]).charAt(0));
+						String s = Integer.toString(path[y][x]);
+						str.append(s.charAt(s.length()-1));
 					}
 				}
 				else {

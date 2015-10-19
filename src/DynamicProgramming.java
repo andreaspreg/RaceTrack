@@ -8,8 +8,11 @@ public class DynamicProgramming {
 	final static int REWARD_OFF_TRACK = -5;
 
 	final static int MAX_VELOCITY = 5;
-	final static double MIN_DELTA = 0.0001;
+	final static double MIN_DELTA = 0.01;
 	final static double GAMMA = 1;
+	
+	long durationValueFunction;
+	long durationEpisodeGeneration;
 	
 	private Track track;
 	private ValueFunction valueFunction;
@@ -21,28 +24,30 @@ public class DynamicProgramming {
 	}
 	
 	public Episode generateEpisode() {
+		durationEpisodeGeneration = System.currentTimeMillis();
+		
 		//start point
 		Point startPoint = track.selectRandomStartPoint();
 		Episode episode = new Episode(track, startPoint);
 		
 		State state = new State(startPoint.y, startPoint.x, 0, 0);
 		Action action = null;
-		int totalReward = 0;
 		
 		do {
 			action = computeActionValue(state).action;
 			state = state.actWithStochastic(action);
 			episode.add(action, state);
-			totalReward += getReward(state);
+			episode.reward += getReward(state);
 		} while(state.posX < Track.WIDTH-1);
 		
-		System.out.println();
-		System.out.println("Total episode reward: " + totalReward);
+		durationEpisodeGeneration = System.currentTimeMillis() - durationEpisodeGeneration;
 		
 		return episode;
 	}
 
 	public void computeValueFunction() {
+		
+		durationValueFunction = System.currentTimeMillis();
 		
 		System.out.println("Computation of the value function:");
 		
@@ -70,6 +75,7 @@ public class DynamicProgramming {
 			
 		} while (delta > MIN_DELTA);
 		
+		durationValueFunction = System.currentTimeMillis() - durationValueFunction;
 	}
 	
 	public ActionValue computeActionValue(State s) {
