@@ -46,4 +46,8 @@ public class State {
 	public State clone() {
 		return new State(posY, posX, velY, velX);
 	}
+	
+	public boolean equals(State s) {
+		return s.posY == posY && s.posX == posX && s.velY == velY && s.velX == velX;
+	}
 }

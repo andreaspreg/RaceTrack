@@ -113,4 +113,39 @@ public class Track {
 		
 		return str.toString();
 	}
+
+	public Collection<Action> getPossibleActions(DynamicProgramming dynamicProgramming, State s) {
+		Collection<Action> actions = new ArrayList<>();
+		
+		for(int y=-1; y<=1; y++) {
+			for(int x=-1; x<=1; x++) {
+				Action action = new Action(y, x);
+				
+				//check velocity boundaries (velocity in between -5 and 5)
+				int newVelY = s.velY + action.accY;
+				int newVelX = s.velX + action.accX;
+				if(newVelY >= -RaceTrack.MAX_VELOCITY && newVelY <= RaceTrack.MAX_VELOCITY &&
+						newVelX >= -RaceTrack.MAX_VELOCITY && newVelX <= RaceTrack.MAX_VELOCITY ) {
+					actions.add(action);
+				}
+			}
+		}
+		
+		return actions;
+	}
+
+	public int getReward(int y, int x) {
+		TrackState trackState = getTrackState(y, x);
+		
+		if(trackState == TrackState.OFFROAD) {
+			return RaceTrack.REWARD_OFF_TRACK;
+		}
+		else {
+			return RaceTrack.REWARD_ON_TRACK;
+		}
+	}
+
+	public int getReward(State s) {
+		return getReward(s.posY, s.posX);
+	}
 }

@@ -1,6 +1,7 @@
 public class RaceTrack {
 	
 	public static void main(String[] args) {
+		//Dynamic Programming
 		DynamicProgramming dynamicProgramming = new DynamicProgramming();
 		dynamicProgramming.computeValueFunction();
 		Episode episode = dynamicProgramming.generateEpisode();
@@ -26,6 +27,23 @@ public class RaceTrack {
 		}
 		System.out.println();
 		System.out.println("Average episode reward: " + (sumRewards * 1.0 / numberEpisodes));
+		
+		
+		//Sarsa
+		Sarsa sarsa = new Sarsa();
+		sarsa.computeQMethod();
+		episode = sarsa.generateEpisode();
+
+		System.out.println();
+		System.out.println("Visualization of an example episode:");
+		System.out.println(episode.toString());
+		
+		System.out.println();
+		System.out.println("Example episode reward: " + episode.reward);
 	}
+
+	final static int MAX_VELOCITY = 5;
+	final static int REWARD_ON_TRACK = -1;
+	final static int REWARD_OFF_TRACK = -5;
 
 }

@@ -3,7 +3,7 @@ import java.util.Collection;
 
 public class ValueFunction {
 
-	final static int VELOCITY_DIMENSION = 2 * DynamicProgramming.MAX_VELOCITY + 1;
+	final static int VELOCITY_DIMENSION = 2 * RaceTrack.MAX_VELOCITY + 1;
 	
 	//values[y][x][velY][velX]
 	double values[][][][];
@@ -21,8 +21,8 @@ public class ValueFunction {
 		//init values by distance
 		for(int y=0; y<values.length; y++) {
 			for(int x=0; x<values[0].length; x++) {
-				for(int velY=-DynamicProgramming.MAX_VELOCITY; velY<=DynamicProgramming.MAX_VELOCITY; velY++) {
-					for(int velX=-DynamicProgramming.MAX_VELOCITY; velX<=DynamicProgramming.MAX_VELOCITY; velX++) {
+				for(int velY=-RaceTrack.MAX_VELOCITY; velY<=RaceTrack.MAX_VELOCITY; velY++) {
+					for(int velX=-RaceTrack.MAX_VELOCITY; velX<=RaceTrack.MAX_VELOCITY; velX++) {
 						initValue(finishLine, new State(y,x,velY,velX), track);
 					}
 				}
@@ -40,12 +40,12 @@ public class ValueFunction {
 		}
 		
 		//minus distance, because the reward is minus
-		//setValue(-minDistance, s);
-		setValue(0,s);
+		setValue(-minDistance, s);
+		//setValue(0,s);
 	}
 	
 	public void setValue(double value, State s) {
-		values[s.posY][s.posX][s.velY + DynamicProgramming.MAX_VELOCITY][s.velX + DynamicProgramming.MAX_VELOCITY] = value;
+		values[s.posY][s.posX][s.velY + RaceTrack.MAX_VELOCITY][s.velX + RaceTrack.MAX_VELOCITY] = value;
 	}
 	
 	public double getValue(State s) {
@@ -59,6 +59,6 @@ public class ValueFunction {
 			return 0;
 		}
 		
-		return values[s.posY][s.posX][s.velY + DynamicProgramming.MAX_VELOCITY][s.velX + DynamicProgramming.MAX_VELOCITY];
+		return values[s.posY][s.posX][s.velY + RaceTrack.MAX_VELOCITY][s.velX + RaceTrack.MAX_VELOCITY];
 	}
 }

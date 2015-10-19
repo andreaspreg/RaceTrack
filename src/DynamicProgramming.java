@@ -1,20 +1,14 @@
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class DynamicProgramming {
 	
-	final static int REWARD_ON_TRACK = -1;
-	final static int REWARD_OFF_TRACK = -5;
-
-	final static int MAX_VELOCITY = 5;
 	final static double MIN_DELTA = 0.01;
 	final static double GAMMA = 1;
 	
 	long durationValueFunction;
 	long durationEpisodeGeneration;
 	
-	private Track track;
+	Track track;
 	private ValueFunction valueFunction;
 	
 	public DynamicProgramming() {
@@ -37,7 +31,7 @@ public class DynamicProgramming {
 			action = computeActionValue(state).action;
 			state = state.actWithStochastic(action);
 			episode.add(action, state);
-			episode.reward += getReward(state);
+			episode.reward += track.getReward(state);
 		} while(state.posX < Track.WIDTH-1);
 		
 		durationEpisodeGeneration = System.currentTimeMillis() - durationEpisodeGeneration;
@@ -60,8 +54,8 @@ public class DynamicProgramming {
 			
 			for(int y=0; y<Track.HEIGHT; y++) {
 				for(int x=0; x<Track.WIDTH; x++) {
-					for(int velY=-MAX_VELOCITY; velY<=MAX_VELOCITY; velY++) {
-						for(int velX=-MAX_VELOCITY; velX<=MAX_VELOCITY; velX++) {
+					for(int velY=-RaceTrack.MAX_VELOCITY; velY<=RaceTrack.MAX_VELOCITY; velY++) {
+						for(int velX=-RaceTrack.MAX_VELOCITY; velX<=RaceTrack.MAX_VELOCITY; velX++) {
 							State s = new State(y,x,velY,velX);
 							ActionValue actionValue = computeActionValue(s);
 							valueFunction.setValue(actionValue.value, s);
@@ -84,7 +78,7 @@ public class DynamicProgramming {
 		
 		double value = valueFunction.getValue(s);
 		
-		for(Action action : getPossibleActions(s)) {
+		for(Action action : track.getPossibleActions(this, s)) {
 			
 			//generate states (s2 and s3 handle the sliding)
 			State s1 = s.act(action);
@@ -94,9 +88,9 @@ public class DynamicProgramming {
 			s3.posX += 1;
 			
 			double sum = 0;
-			sum += 0.5 * (getReward(s1) + GAMMA * valueFunction.getValue(s1));
-			sum += 0.25 * (getReward(s2) + GAMMA * valueFunction.getValue(s2));
-			sum += 0.25 * (getReward(s3) + GAMMA * valueFunction.getValue(s3));
+			sum += 0.5 * (track.getReward(s1) + GAMMA * valueFunction.getValue(s1));
+			sum += 0.25 * (track.getReward(s2) + GAMMA * valueFunction.getValue(s2));
+			sum += 0.25 * (track.getReward(s3) + GAMMA * valueFunction.getValue(s3));
 			
 			if(max == null) {
 				max = new ActionValue(action, sum);
@@ -110,51 +104,5 @@ public class DynamicProgramming {
 		max.delta = Math.abs(value - max.value);
 		
 		return max;
-	}
-	
-	public Collection<Action> getPossibleActions(State s) {
-		Collection<Action> actions = new ArrayList<>();
-		
-		for(int y=-1; y<=1; y++) {
-			for(int x=-1; x<=1; x++) {
-				Action action = new Action(y, x);
-				
-				//check velocity boundaries (velocity in between -5 and 5)
-				int newVelY = s.velY + action.accY;
-				int newVelX = s.velX + action.accX;
-				if(newVelY >= -MAX_VELOCITY && newVelY <= MAX_VELOCITY &&
-						newVelX >= -MAX_VELOCITY && newVelX <= MAX_VELOCITY ) {
-					actions.add(action);
-				}
-			}
-		}
-		
-		return actions;
-	}
-	
-	public int getReward(State s) {
-		return getReward(s.posY, s.posX);
-	}
-	
-	public int getReward(int y, int x) {
-		TrackState trackState = track.getTrackState(y, x);
-		
-		if(trackState == TrackState.OFFROAD) {
-			return REWARD_OFF_TRACK;
-		}
-		else {
-			return REWARD_ON_TRACK;
-		}
-	}
-	
-	class ActionValue {
-		Action action;
-		double value;
-		double delta;
-		
-		public ActionValue(Action action, double value) {
-			this.action = action;
-			this.value = value;
-		}
 	}
 }
