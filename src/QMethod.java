@@ -33,21 +33,21 @@ public class QMethod {
 					}
 				}
 			}
-		}
+		}	
 	}
 
 	private void initValue(Collection<Point> finishLine, State s, Action a, Track track) {
-		/*double minDistance = Track.HEIGHT + Track.WIDTH;
+		double minDistance = Track.HEIGHT + Track.WIDTH;
 		for(Point finish : finishLine) {
 			double dx = finish.x - s.posX;
 			double dy = finish.y - s.posY;
 			double distance = Math.sqrt(dx*dx + dy*dy);
 			minDistance = Math.min(distance, minDistance);
-		}*/
+		}
 		
 		//minus distance, because the reward is minus
-		//setValue(-minDistance, s);
-		setValue(0,s,a);
+		setValue(-minDistance, s, a);
+		//setValue(0,s,a);
 	}
 	
 	public ActionValue getMaxValue(State s) {
@@ -94,7 +94,10 @@ public class QMethod {
 			return 0;
 		}
 		
-		return values[s.posY][s.posX][s.velY + RaceTrack.MAX_VELOCITY][s.velX + RaceTrack.MAX_VELOCITY][a.accY+1][a.accX+1];
+		//
+		int velY = Math.max(0, Math.min(s.velY  + RaceTrack.MAX_VELOCITY, 2*RaceTrack.MAX_VELOCITY));
+		int velX =  Math.max(0, Math.min(s.velX + RaceTrack.MAX_VELOCITY, 2*RaceTrack.MAX_VELOCITY));
+		return values[s.posY][s.posX][velY][velX][a.accY+1][a.accX+1];
 	}
 }
 
